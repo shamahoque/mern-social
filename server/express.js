@@ -5,6 +5,8 @@ import compress from 'compression'
 import cors from 'cors'
 import helmet from 'helmet'
 import Template from './../template'
+import userRoutes from './routes/user.routes'
+import authRoutes from './routes/auth.routes'
 
 const app = express()
 
@@ -20,6 +22,17 @@ app.use(cors())
 
 app.get('/', (req, res) => {
   res.status(200).send(Template())
-});
+})
+
+// mount routes
+app.use('/', userRoutes)
+app.use('/', authRoutes)
+
+// Catch unauthorised errors
+app.use((err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({"error" : err.name + ": " + err.message})
+  }
+})
 
 export default app
