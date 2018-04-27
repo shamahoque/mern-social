@@ -4,7 +4,6 @@ import {withStyles} from 'material-ui/styles'
 import Card, {CardContent, CardMedia} from 'material-ui/Card'
 import Typography from 'material-ui/Typography'
 import seashellImg from './../assets/images/seashell.jpg'
-import {Link} from 'react-router-dom'
 
 const styles = theme => ({
   card: {
@@ -32,7 +31,7 @@ class Home extends Component {
           <CardMedia className={classes.media} image={seashellImg} title="Unicorn Shells"/>
           <CardContent>
             <Typography type="body1" component="p">
-              Welcome to the MERN Skeleton home page. <Link to="/users">Users</Link> <Link to="/signup">Sign up</Link> <Link to="/signin">Sign in</Link>
+              Welcome to the MERN Skeleton home page.
             </Typography>
           </CardContent>
         </Card>

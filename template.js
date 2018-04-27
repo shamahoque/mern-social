@@ -10,7 +10,7 @@ export default ({markup, css}) => {
               a{
                 text-decoration: none
               }
-            </style>
+          </style>
         </head>
         <body style="margin:0">
           <div id="root">${markup}</div>
