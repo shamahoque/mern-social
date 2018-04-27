@@ -30,7 +30,7 @@ const read = (params, credentials) => {
     }
   }).then((response) => {
     return response.json()
-  }).catch((e) => console.log(e))
+  }).catch((err) => console.log(err))
 }
 
 const update = (params, credentials, user) => {
@@ -44,9 +44,7 @@ const update = (params, credentials, user) => {
     body: JSON.stringify(user)
   }).then((response) => {
     return response.json()
-  }).catch((e) => {
-    console.log(e)
-  })
+  }).catch((err) => console.log(err))
 }
 
 const remove = (params, credentials) => {
@@ -59,9 +57,7 @@ const remove = (params, credentials) => {
     }
   }).then((response) => {
     return response.json()
-  }).catch((e) => {
-    console.log(e)
-  })
+  }).catch((err) => console.log(err))
 }
 
 export {
