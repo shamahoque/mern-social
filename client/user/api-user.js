@@ -38,13 +38,14 @@ const update = (params, credentials, user) => {
     method: 'PUT',
     headers: {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + credentials.t
     },
-    body: JSON.stringify(user)
+    body: user
   }).then((response) => {
     return response.json()
-  }).catch((err) => console.log(err))
+  }).catch((err) => {
+    console.log(err)
+  })
 }
 
 const remove = (params, credentials) => {
