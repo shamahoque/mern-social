@@ -1,1 +1,1 @@
-# mern-skeleton
+# mern-social

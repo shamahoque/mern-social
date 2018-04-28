@@ -1,7 +1,7 @@
 {
-  "name": "mern-skeleton",
+  "name": "mern-social",
   "version": "1.0.0",
-  "description": "A MERN stack skeleton web application",
+  "description": "A MERN stack based social media application",
   "author": "Shama Hoque",
   "license": "MIT",
   "keywords": [
@@ -13,9 +13,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/shamahoque/mern-skeleton.git"
+    "url": "https://github.com/shamahoque/mern-social.git"
   },
-  "homepage": "https://github.com/shamahoque/mern-skeleton",
+  "homepage": "https://github.com/shamahoque/mern-social",
   "main": "./dist/server.generated.js",
   "scripts": {
     "development": "nodemon",
