@@ -7,6 +7,7 @@ import AppBar from 'material-ui/AppBar'
 import Typography from 'material-ui/Typography'
 import Tabs, { Tab } from 'material-ui/Tabs'
 import FollowGrid from './../user/FollowGrid'
+import PostList from './../post/PostList'
 
 class ProfileTabs extends Component {
   state = {
@@ -32,18 +33,22 @@ class ProfileTabs extends Component {
             textColor="primary"
             fullWidth
           >
+            <Tab label="Posts" />
             <Tab label="Following" />
             <Tab label="Followers" />
           </Tabs>
         </AppBar>
-       {this.state.tab === 0 && <TabContainer><FollowGrid people={this.props.user.following}/></TabContainer>}
-       {this.state.tab === 1 && <TabContainer><FollowGrid people={this.props.user.followers}/></TabContainer>}
+       {this.state.tab === 0 && <TabContainer><PostList removeUpdate={this.props.removePostUpdate} posts={this.props.posts}/></TabContainer>}
+       {this.state.tab === 1 && <TabContainer><FollowGrid people={this.props.user.following}/></TabContainer>}
+       {this.state.tab === 2 && <TabContainer><FollowGrid people={this.props.user.followers}/></TabContainer>}
     </div>)
   }
 }
 
 ProfileTabs.propTypes = {
-  user: PropTypes.object.isRequired
+  user: PropTypes.object.isRequired,
+  removePostUpdate: PropTypes.func.isRequired,
+  posts: PropTypes.array.isRequired
 }
 
 const TabContainer = (props) => {
