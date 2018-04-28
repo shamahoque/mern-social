@@ -9,6 +9,7 @@ import Divider from 'material-ui/Divider'
 import PropTypes from 'prop-types'
 import {withStyles} from 'material-ui/styles'
 import {Link} from 'react-router-dom'
+import {remove} from './api-post.js'
 
 const styles = theme => ({
   card: {
@@ -40,6 +41,20 @@ const styles = theme => ({
 
 class Post extends Component {
 
+  deletePost = () => {
+    const jwt = auth.isAuthenticated()
+    remove({
+      userId: this.props.post.postedBy._id, postId: this.props.post._id
+    }, {
+      t: jwt.token
+    }).then((data) => {
+      if (data.error) {
+        console.log(data.error)
+      } else {
+        this.props.onRemove(this.props.post)
+      }
+    })
+  }
   render() {
     const {classes} = this.props
     return (
@@ -47,6 +62,11 @@ class Post extends Component {
         <CardHeader
             avatar={
               <Avatar src={'/api/users/photo/'+this.props.post.postedBy._id}/>
+            }
+            action={this.props.post.postedBy._id === auth.isAuthenticated().user._id &&
+              <IconButton onClick={this.deletePost}>
+                <DeleteIcon />
+              </IconButton>
             }
             title={<Link to={"/user/" + this.props.post.postedBy._id}>{this.props.post.postedBy.name}</Link>}
             subheader={(new Date(this.props.post.created)).toDateString()}
@@ -72,7 +92,8 @@ class Post extends Component {
 
 Post.propTypes = {
   classes: PropTypes.object.isRequired,
-  post: PropTypes.object.isRequired
+  post: PropTypes.object.isRequired,
+  onRemove: PropTypes.func.isRequired
 }
 
 export default withStyles(styles)(Post)

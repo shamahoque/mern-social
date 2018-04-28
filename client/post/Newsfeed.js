@@ -43,6 +43,12 @@ class Newsfeed extends Component {
   componentDidMount = () => {
     this.loadPosts()
   }
+  removePost = (post) => {
+    const updatedPosts = this.state.posts
+    const index = updatedPosts.indexOf(post)
+    updatedPosts.splice(index, 1)
+    this.setState({posts: updatedPosts})
+  }
   render() {
     const {classes} = this.props
     return (
@@ -51,7 +57,7 @@ class Newsfeed extends Component {
           Newsfeed
         </Typography>
         <Divider/>
-        <PostList posts={this.state.posts}/>
+        <PostList removeUpdate={this.removePost} posts={this.state.posts}/>
       </Card>
     )
   }

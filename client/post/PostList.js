@@ -8,7 +8,7 @@ class PostList extends Component {
     return (
       <div style={{marginTop: '24px'}}>
         {this.props.posts.map((item, i) => {
-            return <Post post={item} key={i}/>
+            return <Post post={item} key={i} onRemove={this.props.removeUpdate}/>
           })
         }
       </div>
@@ -16,6 +16,7 @@ class PostList extends Component {
   }
 }
 PostList.propTypes = {
-  posts: PropTypes.array.isRequired
+  posts: PropTypes.array.isRequired,
+  removeUpdate: PropTypes.func.isRequired
 }
 export default PostList
