@@ -8,6 +8,7 @@ import {Link} from 'react-router-dom'
 import Grid from 'material-ui/Grid'
 import auth from './../auth/auth-helper'
 import FindPeople from './../user/FindPeople'
+import Newsfeed from './../post/Newsfeed'
 
 const styles = theme => ({
   root: {
@@ -69,7 +70,7 @@ class Home extends Component {
         {!this.state.defaultPage &&
           <Grid container spacing={24}>
             <Grid item xs={8} sm={7}>
-              Newsfeed
+              <Newsfeed/>
             </Grid>
             <Grid item xs={6} sm={5}>
               <FindPeople/>
