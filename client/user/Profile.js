@@ -74,7 +74,7 @@ class Profile extends Component {
               </Avatar>
             </ListItemAvatar>
             <ListItemText primary={this.state.user.name} secondary={this.state.user.email}/> {
-             auth.isAuthenticated().user && auth.isAuthenticated().user._id == this.state.user._id && 
+             auth.isAuthenticated().user && auth.isAuthenticated().user._id == this.state.user._id &&
               (<ListItemSecondaryAction>
                 <Link to={"/user/edit/" + this.state.user._id}>
                   <IconButton aria-label="Edit" color="primary">
@@ -87,7 +87,7 @@ class Profile extends Component {
           </ListItem>
           <Divider/>
           <ListItem>
-            <ListItemText primary={"Joined: " + (
+            <ListItemText primary={this.state.user.about} secondary={"Joined: " + (
               new Date(this.state.user.created)).toDateString()}/>
           </ListItem>
         </List>
