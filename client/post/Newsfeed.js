@@ -7,6 +7,7 @@ import Divider from 'material-ui/Divider'
 import auth from './../auth/auth-helper'
 import PostList from './PostList'
 import {listNewsFeed} from './api-post.js'
+import NewPost from './NewPost'
 
 const styles = theme => ({
   card: {
@@ -43,6 +44,11 @@ class Newsfeed extends Component {
   componentDidMount = () => {
     this.loadPosts()
   }
+  addPost = (post) => {
+    const updatedPosts = this.state.posts
+    updatedPosts.unshift(post)
+    this.setState({posts: updatedPosts})
+  }
   removePost = (post) => {
     const updatedPosts = this.state.posts
     const index = updatedPosts.indexOf(post)
@@ -56,6 +62,8 @@ class Newsfeed extends Component {
         <Typography type="title" className={classes.title}>
           Newsfeed
         </Typography>
+        <Divider/>
+        <NewPost addUpdate={this.addPost}/>
         <Divider/>
         <PostList removeUpdate={this.removePost} posts={this.state.posts}/>
       </Card>
