@@ -5,11 +5,13 @@ import Typography from 'material-ui/Typography'
 import Avatar from 'material-ui/Avatar'
 import IconButton from 'material-ui/IconButton'
 import DeleteIcon from 'material-ui-icons/Delete'
+import FavoriteIcon from 'material-ui-icons/Favorite'
+import FavoriteBorderIcon from 'material-ui-icons/FavoriteBorder'
 import Divider from 'material-ui/Divider'
 import PropTypes from 'prop-types'
 import {withStyles} from 'material-ui/styles'
 import {Link} from 'react-router-dom'
-import {remove} from './api-post.js'
+import {remove, like, unlike} from './api-post.js'
 
 const styles = theme => ({
   card: {
@@ -36,10 +38,46 @@ const styles = theme => ({
   },
   media: {
     height: 200
+  },
+  button: {
+   margin: theme.spacing.unit,
   }
 })
 
 class Post extends Component {
+  state = {
+    like: false,
+    likes: 0
+  }
+
+  componentDidMount = () => {
+    this.setState({like:this.checkLike(this.props.post.likes), likes: this.props.post.likes.length})
+  }
+  componentWillReceiveProps = (props) => {
+    this.setState({like:this.checkLike(props.post.likes), likes: props.post.likes.length})
+  }
+
+  checkLike = (likes) => {
+    const jwt = auth.isAuthenticated()
+    let match = likes.indexOf(jwt.user._id) !== -1
+    return match
+  }
+
+  like = () => {
+    let callApi = this.state.like ? unlike : like
+    const jwt = auth.isAuthenticated()
+    callApi({
+      userId: jwt.user._id
+    }, {
+      t: jwt.token
+    }, this.props.post._id).then((data) => {
+      if (data.error) {
+        console.log(data.error)
+      } else {
+        this.setState({like: !this.state.like, likes: data.likes.length})
+      }
+    })
+  }
 
   deletePost = () => {
     const jwt = auth.isAuthenticated()
@@ -84,6 +122,15 @@ class Post extends Component {
                 />
             </div>)}
         </CardContent>
+        <CardActions>
+          { this.state.like
+            ? <IconButton onClick={this.like} className={classes.button} aria-label="Like" color="secondary">
+                <FavoriteIcon />
+              </IconButton>
+            : <IconButton onClick={this.like} className={classes.button} aria-label="Like" color="secondary">
+                <FavoriteBorderIcon />
+              </IconButton> } <span>{this.state.likes}</span>
+        </CardActions>
         <Divider/>
       </Card>
     )
