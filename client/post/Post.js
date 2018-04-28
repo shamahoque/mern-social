@@ -7,11 +7,13 @@ import IconButton from 'material-ui/IconButton'
 import DeleteIcon from 'material-ui-icons/Delete'
 import FavoriteIcon from 'material-ui-icons/Favorite'
 import FavoriteBorderIcon from 'material-ui-icons/FavoriteBorder'
+import CommentIcon from 'material-ui-icons/Comment'
 import Divider from 'material-ui/Divider'
 import PropTypes from 'prop-types'
 import {withStyles} from 'material-ui/styles'
 import {Link} from 'react-router-dom'
 import {remove, like, unlike} from './api-post.js'
+import Comments from './Comments'
 
 const styles = theme => ({
   card: {
@@ -47,14 +49,15 @@ const styles = theme => ({
 class Post extends Component {
   state = {
     like: false,
-    likes: 0
+    likes: 0,
+    comments: []
   }
 
   componentDidMount = () => {
-    this.setState({like:this.checkLike(this.props.post.likes), likes: this.props.post.likes.length})
+    this.setState({like:this.checkLike(this.props.post.likes), likes: this.props.post.likes.length, comments: this.props.post.comments})
   }
   componentWillReceiveProps = (props) => {
-    this.setState({like:this.checkLike(props.post.likes), likes: props.post.likes.length})
+    this.setState({like:this.checkLike(props.post.likes), likes: props.post.likes.length, comments: props.post.comments})
   }
 
   checkLike = (likes) => {
@@ -77,6 +80,10 @@ class Post extends Component {
         this.setState({like: !this.state.like, likes: data.likes.length})
       }
     })
+  }
+
+  updateComments = (comments) => {
+    this.setState({comments: comments})
   }
 
   deletePost = () => {
@@ -130,8 +137,12 @@ class Post extends Component {
             : <IconButton onClick={this.like} className={classes.button} aria-label="Like" color="secondary">
                 <FavoriteBorderIcon />
               </IconButton> } <span>{this.state.likes}</span>
+              <IconButton className={classes.button} aria-label="Comment" color="secondary">
+                <CommentIcon/>
+              </IconButton> <span>{this.state.comments.length}</span>
         </CardActions>
         <Divider/>
+        <Comments postId={this.props.post._id} comments={this.state.comments} updateComments={this.updateComments}/>
       </Card>
     )
   }
