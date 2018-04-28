@@ -17,7 +17,8 @@ const styles = theme => ({
   },
   title: {
     padding:`${theme.spacing.unit * 3}px ${theme.spacing.unit * 2.5}px ${theme.spacing.unit * 2}px`,
-    color: theme.palette.openTitle
+    color: theme.palette.openTitle,
+    fontSize: '1em'
   },
   media: {
     minHeight: 330

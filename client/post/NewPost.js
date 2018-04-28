@@ -83,7 +83,7 @@ class NewPost extends Component {
   handleChange = name => event => {
     const value = name === 'photo'
       ? event.target.files[0]
-      : event.target.value;
+      : event.target.value
     this.postData.set(name, value)
     this.setState({ [name]: value })
   }
