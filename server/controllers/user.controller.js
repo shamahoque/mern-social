@@ -23,11 +23,13 @@ const create = (req, res, next) => {
  * Load user and append to req.
  */
 const userByID = (req, res, next, id) => {
-  User.findById(id).exec((err, user) => {
-    if (err || !user)
-      return res.status('400').json({
-        error: "User not found"
-      })
+  User.findById(id)
+    .populate('following', '_id name')
+    .populate('followers', '_id name')
+    .exec((err, user) => {
+    if (err || !user) return res.status('400').json({
+      error: "User not found"
+    })
     req.profile = user
     next()
   })
@@ -105,6 +107,60 @@ const defaultPhoto = (req, res) => {
   return res.sendFile(process.cwd()+profileImage)
 }
 
+const addFollowing = (req, res, next) => {
+  User.findByIdAndUpdate(req.body.userId, {$push: {following: req.body.followId}}, (err, result) => {
+    if (err) {
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err)
+      })
+    }
+    next()
+  })
+}
+
+const addFollower = (req, res) => {
+  User.findByIdAndUpdate(req.body.followId, {$push: {followers: req.body.userId}}, {new: true})
+  .populate('following', '_id name')
+  .populate('followers', '_id name')
+  .exec((err, result) => {
+    if (err) {
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err)
+      })
+    }
+    result.hashed_password = undefined
+    result.salt = undefined
+    res.json(result)
+  })
+}
+
+const removeFollowing = (req, res, next) => {
+  User.findByIdAndUpdate(req.body.userId, {$pull: {following: req.body.unfollowId}}, (err, result) => {
+    if (err) {
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err)
+      })
+    }
+    next()
+  })
+}
+const removeFollower = (req, res) => {
+  User.findByIdAndUpdate(req.body.unfollowId, {$pull: {followers: req.body.userId}}, {new: true})
+  .populate('following', '_id name')
+  .populate('followers', '_id name')
+  .exec((err, result) => {
+    if (err) {
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err)
+      })
+    }
+    result.hashed_password = undefined
+    result.salt = undefined
+    res.json(result)
+
+  })
+}
+
 export default {
   create,
   userByID,
@@ -113,5 +169,9 @@ export default {
   remove,
   update,
   photo,
-  defaultPhoto
+  defaultPhoto,
+  addFollowing,
+  addFollower,
+  removeFollowing,
+  removeFollower
 }
