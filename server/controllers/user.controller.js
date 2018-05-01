@@ -53,7 +53,7 @@ const list = (req, res) => {
 }
 
 const update = (req, res, next) => {
-  var form = new formidable.IncomingForm()
+  let form = new formidable.IncomingForm()
   form.keepExtensions = true
   form.parse(req, (err, fields, files) => {
     if (err) {
@@ -65,7 +65,7 @@ const update = (req, res, next) => {
     user = _.extend(user, fields)
     user.updated = Date.now()
     if(files.photo){
-    user.photo.data = fs.readFileSync(files.photo.path)
+      user.photo.data = fs.readFileSync(files.photo.path)
       user.photo.contentType = files.photo.type
     }
     user.save((err, result) => {
@@ -157,7 +157,6 @@ const removeFollower = (req, res) => {
     result.hashed_password = undefined
     result.salt = undefined
     res.json(result)
-
   })
 }
 
