@@ -5,7 +5,7 @@ import formidable from 'formidable'
 import fs from 'fs'
 
 const create = (req, res, next) => {
-  var form = new formidable.IncomingForm()
+  let form = new formidable.IncomingForm()
   form.keepExtensions = true
   form.parse(req, (err, fields, files) => {
     if (err) {
@@ -31,7 +31,7 @@ const create = (req, res, next) => {
 }
 
 const postByID = (req, res, next, id) => {
-  Post.findById(id).exec((err, post) => {
+  Post.findById(id).populate('postedBy', '_id name').exec((err, post) => {
     if (err || !post)
       return res.status('400').json({
         error: "Post not found"
@@ -147,6 +147,16 @@ const uncomment = (req, res) => {
   })
 }
 
+const isPoster = (req, res, next) => {
+  let isPoster = req.post && req.auth && req.post.postedBy._id == req.auth._id
+  if(!isPoster){
+    return res.status('401').json({
+      error: "User is not authorized"
+    })
+  }
+  next()
+}
+
 export default {
   listByUser,
   listNewsFeed,
@@ -157,5 +167,6 @@ export default {
   like,
   unlike,
   comment,
-  uncomment
+  uncomment,
+  isPoster
 }

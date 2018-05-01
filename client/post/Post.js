@@ -89,7 +89,7 @@ class Post extends Component {
   deletePost = () => {
     const jwt = auth.isAuthenticated()
     remove({
-      userId: this.props.post.postedBy._id, postId: this.props.post._id
+      postId: this.props.post._id
     }, {
       t: jwt.token
     }).then((data) => {
@@ -134,7 +134,7 @@ class Post extends Component {
             ? <IconButton onClick={this.like} className={classes.button} aria-label="Like" color="secondary">
                 <FavoriteIcon />
               </IconButton>
-            : <IconButton onClick={this.like} className={classes.button} aria-label="Like" color="secondary">
+            : <IconButton onClick={this.like} className={classes.button} aria-label="Unlike" color="secondary">
                 <FavoriteBorderIcon />
               </IconButton> } <span>{this.state.likes}</span>
               <IconButton className={classes.button} aria-label="Comment" color="secondary">
