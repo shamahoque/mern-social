@@ -1,6 +1,6 @@
 # MERN Social
 
-### [Live Demo](http://social.mernbook.com/ "MERN Skeleton")
+### [Live Demo](http://social.mernbook.com/ "MERN Social")
 
 #### What you need to run this code
 1. Node (8.11.1)
