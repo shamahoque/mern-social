@@ -40,7 +40,7 @@ const listNewsFeed = (params, credentials) => {
 }
 
 const remove = (params, credentials) => {
-  return fetch('/api/posts/' + params.postId +'/' +params.userId, {
+  return fetch('/api/posts/' + params.postId, {
     method: 'DELETE',
     headers: {
       'Accept': 'application/json',
