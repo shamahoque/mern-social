@@ -1,14 +1,16 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
-import {withStyles} from 'material-ui/styles'
-import Paper from 'material-ui/Paper'
-import List, {ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText} from 'material-ui/List'
-import Avatar from 'material-ui/Avatar'
-import IconButton from 'material-ui/IconButton'
-import Button from 'material-ui/Button'
-import Typography from 'material-ui/Typography'
-import Edit from 'material-ui-icons/Edit'
-import Divider from 'material-ui/Divider'
+import React, { useState, useEffect } from 'react'
+import {makeStyles} from '@material-ui/core/styles'
+import Paper from '@material-ui/core/Paper'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction' 
+import ListItemText from '@material-ui/core/ListItemText' 
+import Avatar from '@material-ui/core/Avatar'
+import IconButton from '@material-ui/core/IconButton'
+import Typography from '@material-ui/core/Typography'
+import Edit from '@material-ui/icons/Edit'
+import Divider from '@material-ui/core/Divider'
 import DeleteUser from './DeleteUser'
 import auth from './../auth/auth-helper'
 import {read} from './api-user.js'
@@ -17,15 +19,15 @@ import FollowProfileButton from './../user/FollowProfileButton'
 import ProfileTabs from './../user/ProfileTabs'
 import {listByUser} from './../post/api-post.js'
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: theme.mixins.gutters({
     maxWidth: 600,
     margin: 'auto',
-    padding: theme.spacing.unit * 3,
-    marginTop: theme.spacing.unit * 5
+    padding: theme.spacing(3),
+    marginTop: theme.spacing(5)
   }),
   title: {
-    margin: `${theme.spacing.unit * 2}px ${theme.spacing.unit}px 0`,
+    margin: `${theme.spacing(2)}px ${theme.spacing(1)}px 0`,
     color: theme.palette.protectedTitle,
     fontSize: '1em'
   },
@@ -34,62 +36,59 @@ const styles = theme => ({
     height: 60,
     margin: 10
   }
-})
+}))
 
-class Profile extends Component {
-  constructor({match}) {
-    super()
-    this.state = {
-      user: {following:[], followers:[]},
-      redirectToSignin: false,
-      following: false,
-      posts: []
-    }
-    this.match = match
-  }
-  init = (userId) => {
-    const jwt = auth.isAuthenticated()
+export default function Profile({ match }) {
+  const classes = useStyles();
+  const [values, setValues] = useState({
+    user: {following:[], followers:[]},
+    redirectToSignin: false,
+    following: false
+  })
+  const [posts, setPosts] = useState([])
+  const jwt = auth.isAuthenticated()
+
+  useEffect(() => {
+    const abortController = new AbortController()
+    const signal = abortController.signal
+  
     read({
-      userId: userId
-    }, {t: jwt.token}).then((data) => {
-      if (data.error) {
-        this.setState({redirectToSignin: true})
+      userId: match.params.userId
+    }, {t: jwt.token}, signal).then((data) => {
+      if (data && data.error) {
+        setValues({...values, redirectToSignin: true})
       } else {
-        let following = this.checkFollow(data)
-        this.setState({user: data, following: following})
-        this.loadPosts(data._id)
+        let following = checkFollow(data)
+        setValues({...values, user: data, following: following})
+        loadPosts(data._id)
       }
     })
-  }
-  componentWillReceiveProps = (props) => {
-    this.init(props.match.params.userId)
-  }
-  componentDidMount = () => {
-    this.init(this.match.params.userId)
-  }
-  checkFollow = (user) => {
-    const jwt = auth.isAuthenticated()
-    const match = user.followers.find((follower)=> {
+    return function cleanup(){
+      abortController.abort()
+    }
+
+  }, [match.params.userId])
+  
+  const checkFollow = (user) => {
+    const match = user.followers.some((follower)=> {
       return follower._id == jwt.user._id
     })
     return match
   }
-  clickFollowButton = (callApi) => {
-    const jwt = auth.isAuthenticated()
+  const clickFollowButton = (callApi) => {
     callApi({
       userId: jwt.user._id
     }, {
       t: jwt.token
-    }, this.state.user._id).then((data) => {
+    }, values.user._id).then((data) => {
       if (data.error) {
-        this.setState({error: data.error})
+        setValues({...values, error: data.error})
       } else {
-        this.setState({user: data, following: !this.state.following})
+        setValues({...values, user: data, following: !values.following})
       }
     })
   }
-  loadPosts = (user) => {
-    const jwt = auth.isAuthenticated()
+  const loadPosts = (user) => {
     listByUser({
       userId: user
     }, {
@@ -98,23 +97,21 @@ class Profile extends Component {
       if (data.error) {
         console.log(data.error)
       } else {
-        this.setState({posts: data})
+        setPosts(data)
       }
     })
   }
-  removePost = (post) => {
-    const updatedPosts = this.state.posts
+  const removePost = (post) => {
+    const updatedPosts = posts
     const index = updatedPosts.indexOf(post)
     updatedPosts.splice(index, 1)
-    this.setState({posts: updatedPosts})
+    setPosts(updatedPosts)
   }
-  render() {
-    const {classes} = this.props
-    const photoUrl = this.state.user._id
-              ? `/api/users/photo/${this.state.user._id}?${new Date().getTime()}`
+
+    const photoUrl = values.user._id
+              ? `/api/users/photo/${values.user._id}?${new Date().getTime()}`
               : '/api/users/defaultphoto'
-    const redirectToSignin = this.state.redirectToSignin
-    if (redirectToSignin) {
+    if (values.redirectToSignin) {
       return <Redirect to='/signin'/>
     }
     return (
@@ -127,32 +124,28 @@ class Profile extends Component {
             <ListItemAvatar>
               <Avatar src={photoUrl} className={classes.bigAvatar}/>
             </ListItemAvatar>
-            <ListItemText primary={this.state.user.name} secondary={this.state.user.email}/> {
-             auth.isAuthenticated().user && auth.isAuthenticated().user._id == this.state.user._id
+            <ListItemText primary={values.user.name} secondary={values.user.email}/> {
+             auth.isAuthenticated().user && auth.isAuthenticated().user._id == values.user._id
              ? (<ListItemSecondaryAction>
-                  <Link to={"/user/edit/" + this.state.user._id}>
+                  <Link to={"/user/edit/" + values.user._id}>
                     <IconButton aria-label="Edit" color="primary">
                       <Edit/>
                     </IconButton>
                   </Link>
-                  <DeleteUser userId={this.state.user._id}/>
+                  <DeleteUser userId={values.user._id}/>
                 </ListItemSecondaryAction>)
-            : (<FollowProfileButton following={this.state.following} onButtonClick={this.clickFollowButton}/>)
+            : (<FollowProfileButton following={values.following} onButtonClick={clickFollowButton}/>)
             }
           </ListItem>
           <Divider/>
           <ListItem>
-            <ListItemText primary={this.state.user.about} secondary={"Joined: " + (
-              new Date(this.state.user.created)).toDateString()}/>
+            <ListItemText primary={values.user.about} secondary={"Joined: " + (
+              new Date(values.user.created)).toDateString()}/>
           </ListItem>
         </List>
-        <ProfileTabs user={this.state.user} posts={this.state.posts} removePostUpdate={this.removePost}/>
+        <ProfileTabs user={values.user} posts={posts} removePostUpdate={removePost}/>
       </Paper>
     )
-  }
-}
-Profile.propTypes = {
-  classes: PropTypes.object.isRequired
 }
 
-export default withStyles(styles)(Profile)
+

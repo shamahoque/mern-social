@@ -1,18 +1,18 @@
-import React, {Component} from 'react'
+import React, {useState} from 'react'
 import auth from './../auth/auth-helper'
-import { CardHeader } from 'material-ui/Card'
-import TextField from 'material-ui/TextField'
-import Avatar from 'material-ui/Avatar'
-import Icon from 'material-ui/Icon'
+import CardHeader from '@material-ui/core/CardHeader'
+import TextField from '@material-ui/core/TextField'
+import Avatar from '@material-ui/core/Avatar'
+import Icon from '@material-ui/core/Icon'
 import PropTypes from 'prop-types'
-import {withStyles} from 'material-ui/styles'
+import {makeStyles} from '@material-ui/core/styles'
 import {comment, uncomment} from './api-post.js'
 import {Link} from 'react-router-dom'
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   cardHeader: {
-    paddingTop: theme.spacing.unit,
-    paddingBottom: theme.spacing.unit
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1)
   },
   smallAvatar: {
     width: 25,
@@ -23,8 +23,8 @@ const styles = theme => ({
   },
   commentText: {
     backgroundColor: 'white',
-    padding: theme.spacing.unit,
-    margin: `2px ${theme.spacing.unit*2}px 2px 2px`
+    padding: theme.spacing(1),
+    margin: `2px ${theme.spacing(2)}px 2px 2px`
   },
   commentDate: {
     display: 'block',
@@ -36,48 +36,47 @@ const styles = theme => ({
    verticalAlign: 'middle',
    cursor: 'pointer'
  }
-})
+}))
 
-class Comments extends Component {
-  state = {text: ''}
-  handleChange = name => event => {
-    this.setState({[name]: event.target.value})
+export default function Comments (props) {
+  const classes = useStyles()
+  const [text, setText] = useState('')
+  const jwt = auth.isAuthenticated()
+  const handleChange = event => {
+    setText(event.target.value)
   }
-  addComment = (event) => {
+  const addComment = (event) => {
     if(event.keyCode == 13 && event.target.value){
       event.preventDefault()
-      const jwt = auth.isAuthenticated()
       comment({
         userId: jwt.user._id
       }, {
         t: jwt.token
-      }, this.props.postId, {text: this.state.text}).then((data) => {
+      }, props.postId, {text: text}).then((data) => {
         if (data.error) {
           console.log(data.error)
         } else {
-          this.setState({text: ''})
-          this.props.updateComments(data.comments)
+          setText('')
+          props.updateComments(data.comments)
         }
       })
     }
   }
 
-  deleteComment = comment => event => {
-    const jwt = auth.isAuthenticated()
+  const deleteComment = comment => event => {
     uncomment({
       userId: jwt.user._id
     }, {
       t: jwt.token
-    }, this.props.postId, comment).then((data) => {
+    }, props.postId, comment).then((data) => {
       if (data.error) {
         console.log(data.error)
       } else {
-        this.props.updateComments(data.comments)
+        props.updateComments(data.comments)
       }
     })
   }
-  render() {
-    const {classes} = this.props
+
     const commentBody = item => {
       return (
         <p className={classes.commentText}>
@@ -86,7 +85,7 @@ class Comments extends Component {
           <span className={classes.commentDate}>
             {(new Date(item.created)).toDateString()} |
             {auth.isAuthenticated().user._id === item.postedBy._id &&
-              <Icon onClick={this.deleteComment(item)} className={classes.commentDelete}>delete</Icon> }
+              <Icon onClick={deleteComment(item)} className={classes.commentDelete}>delete</Icon> }
           </span>
         </p>
       )
@@ -98,17 +97,17 @@ class Comments extends Component {
                 <Avatar className={classes.smallAvatar} src={'/api/users/photo/'+auth.isAuthenticated().user._id}/>
               }
               title={ <TextField
-                onKeyDown={this.addComment}
+                onKeyDown={addComment}
                 multiline
-                value={this.state.text}
-                onChange={this.handleChange('text')}
+                value={text}
+                onChange={handleChange}
                 placeholder="Write something ..."
                 className={classes.commentField}
                 margin="normal"
                 />}
               className={classes.cardHeader}
         />
-        { this.props.comments.map((item, i) => {
+        { props.comments.map((item, i) => {
             return <CardHeader
                       avatar={
                         <Avatar className={classes.smallAvatar} src={'/api/users/photo/'+item.postedBy._id}/>
@@ -119,14 +118,10 @@ class Comments extends Component {
               })
         }
     </div>)
-  }
 }
 
 Comments.propTypes = {
-  classes: PropTypes.object.isRequired,
   postId: PropTypes.string.isRequired,
   comments: PropTypes.array.isRequired,
   updateComments: PropTypes.func.isRequired
 }
-
-export default withStyles(styles)(Comments)

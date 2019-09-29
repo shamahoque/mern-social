@@ -1,16 +1,16 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
-import {withStyles} from 'material-ui/styles'
-import Card, {CardContent, CardMedia} from 'material-ui/Card'
-import Typography from 'material-ui/Typography'
+import React, {useState, useEffect} from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import Card from '@material-ui/core/Card'
+import CardMedia from '@material-ui/core/CardMedia'
+import CardContent from '@material-ui/core/CardContent'
+import Typography from '@material-ui/core/Typography'
 import seashellImg from './../assets/images/seashell.jpg'
-import {Link} from 'react-router-dom'
-import Grid from 'material-ui/Grid'
+import Grid from '@material-ui/core/Grid'
 import auth from './../auth/auth-helper'
 import FindPeople from './../user/FindPeople'
 import Newsfeed from './../post/Newsfeed'
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     margin: 30,
@@ -18,40 +18,35 @@ const styles = theme => ({
   card: {
     maxWidth: 600,
     margin: 'auto',
-    marginTop: theme.spacing.unit * 5
+    marginTop: theme.spacing(5)
   },
   title: {
-    padding:`${theme.spacing.unit * 3}px ${theme.spacing.unit * 2.5}px ${theme.spacing.unit * 2}px`,
+    padding:`${theme.spacing(3)}px ${theme.spacing(2.5)}px ${theme.spacing(2)}px`,
     color: theme.palette.text.secondary
   },
   media: {
     minHeight: 330
   }
-})
+}))
 
-class Home extends Component {
-  state = {
-    defaultPage: true
-  }
-  init = () => {
-    if(auth.isAuthenticated()){
-      this.setState({defaultPage: false})
-    }else{
-      this.setState({defaultPage: true})
+export default function Home({history}){
+  const classes = useStyles()
+  const [defaultPage, setDefaultPage] = useState(false)
+
+  useEffect(()=> {
+    setDefaultPage(auth.isAuthenticated())
+    const unlisten = history.listen (() => {
+      setDefaultPage(auth.isAuthenticated())
+    })
+    return () => {
+      unlisten()
     }
-  }
-  componentWillReceiveProps = () => {
-    this.init()
-  }
-  componentDidMount = () => {
-    this.init()
-  }
-  render() {
-    const {classes} = this.props
+  }, [])
+
     return (
       <div className={classes.root}>
-        {this.state.defaultPage &&
-          <Grid container spacing={24}>
+        { !defaultPage &&
+          <Grid container spacing={8}>
             <Grid item xs={12}>
               <Card className={classes.card}>
                 <Typography type="headline" component="h2" className={classes.title}>
@@ -67,8 +62,8 @@ class Home extends Component {
             </Grid>
           </Grid>
         }
-        {!this.state.defaultPage &&
-          <Grid container spacing={24}>
+        {defaultPage &&
+          <Grid container spacing={8}>
             <Grid item xs={8} sm={7}>
               <Newsfeed/>
             </Grid>
@@ -79,11 +74,4 @@ class Home extends Component {
         }
       </div>
     )
-  }
 }
-
-Home.propTypes = {
-  classes: PropTypes.object.isRequired
-}
-
-export default withStyles(styles)(Home)

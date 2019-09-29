@@ -9,16 +9,7 @@ import Profile from './user/Profile'
 import PrivateRoute from './auth/PrivateRoute'
 import Menu from './core/Menu'
 
-class MainRouter extends Component {
-  // Removes the server-side injected CSS when React component mounts
-  componentDidMount() {
-    const jssStyles = document.getElementById('jss-server-side')
-    if (jssStyles && jssStyles.parentNode) {
-      jssStyles.parentNode.removeChild(jssStyles)
-    }
-  }
-
-  render() {
+const MainRouter = () => {
     return (<div>
       <Menu/>
       <Switch>
@@ -30,7 +21,6 @@ class MainRouter extends Component {
         <Route path="/user/:userId" component={Profile}/>
       </Switch>
     </div>)
-  }
 }
 
 export default MainRouter

@@ -1,9 +1,8 @@
 import mongoose from 'mongoose'
-import crypto from 'crypto'
 const PostSchema = new mongoose.Schema({
   text: {
     type: String,
-    required: 'Name is required'
+    required: 'Text is required'
   },
   photo: {
     data: Buffer,

@@ -1,40 +1,41 @@
-import React, {Component} from 'react'
-import Card, {CardActions, CardContent} from 'material-ui/Card'
-import Button from 'material-ui/Button'
-import TextField from 'material-ui/TextField'
-import Typography from 'material-ui/Typography'
-import Icon from 'material-ui/Icon'
-import Avatar from 'material-ui/Avatar'
-import FileUpload from 'material-ui-icons/FileUpload'
-import PropTypes from 'prop-types'
-import {withStyles} from 'material-ui/styles'
+import React, {useEffect, useState} from 'react'
+import Card from '@material-ui/core/Card'
+import CardActions from '@material-ui/core/CardActions'
+import CardContent from '@material-ui/core/CardContent'
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
+import Typography from '@material-ui/core/Typography'
+import Icon from '@material-ui/core/Icon'
+import Avatar from '@material-ui/core/Avatar'
+import FileUpload from '@material-ui/icons/AddPhotoAlternate'
+import { makeStyles } from '@material-ui/core/styles'
 import auth from './../auth/auth-helper'
 import {read, update} from './api-user.js'
 import {Redirect} from 'react-router-dom'
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   card: {
     maxWidth: 600,
     margin: 'auto',
     textAlign: 'center',
-    marginTop: theme.spacing.unit * 5,
-    paddingBottom: theme.spacing.unit * 2
+    marginTop: theme.spacing(5),
+    paddingBottom: theme.spacing(2)
   },
   title: {
-    margin: theme.spacing.unit * 2,
+    margin: theme.spacing(2),
     color: theme.palette.protectedTitle
   },
   error: {
     verticalAlign: 'middle'
   },
   textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
     width: 300
   },
   submit: {
     margin: 'auto',
-    marginBottom: theme.spacing.unit * 2
+    marginBottom: theme.spacing(2)
   },
   bigAvatar: {
     width: 60,
@@ -47,70 +48,72 @@ const styles = theme => ({
   filename:{
     marginLeft:'10px'
   }
-})
+}))
 
-class EditProfile extends Component {
-  constructor({match}) {
-    super()
-    this.state = {
-      name: '',
-      about: '',
-      photo: '',
-      email: '',
-      password: '',
-      redirectToProfile: false,
-      error: ''
-    }
-    this.match = match
-  }
+export default function EditProfile({ match }) {
+  const classes = useStyles()
+  const [values, setValues] = useState({
+    name: '',
+    about: '',
+    photo: '',
+    email: '',
+    password: '',
+    redirectToProfile: false,
+    error: '',
+    id: ''
+  })
+  const jwt = auth.isAuthenticated()
 
-  componentDidMount = () => {
-    this.userData = new FormData()
-    const jwt = auth.isAuthenticated()
+  useEffect(() => {
+    const abortController = new AbortController()
+    const signal = abortController.signal
+
     read({
-      userId: this.match.params.userId
-    }, {t: jwt.token}).then((data) => {
-      if (data.error) {
-        this.setState({error: data.error})
+      userId: match.params.userId
+    }, {t: jwt.token}, signal).then((data) => {
+      if (data & data.error) {
+        setValues({...values, error: data.error})
       } else {
-        this.setState({id: data._id, name: data.name, email: data.email, about: data.about})
+        setValues({...values, id: data._id, name: data.name, email: data.email, about: data.about})
       }
     })
-  }
-  clickSubmit = () => {
-    const jwt = auth.isAuthenticated()
-    const user = {
-      name: this.state.name || undefined,
-      email: this.state.email || undefined,
-      password: this.state.password || undefined,
-      about: this.state.about || undefined
+    return function cleanup(){
+      abortController.abort()
     }
+
+  }, [match.params.userId])
+  
+  const clickSubmit = () => {
+    let userData = new FormData()
+    userData.append('name', values.name || undefined)
+    userData.append('email', values.email || undefined)
+    userData.append('passoword', values.passoword || undefined)
+    userData.append('about', values.about || undefined)
+    userData.append('photo', values.photo || undefined)
     update({
-      userId: this.match.params.userId
+      userId: match.params.userId
     }, {
       t: jwt.token
-    }, this.userData).then((data) => {
-      if (data.error) {
-        this.setState({error: data.error})
+    }, userData).then((data) => {
+      if (data && data.error) {
+        setValues({...values, error: data.error})
       } else {
-        this.setState({'redirectToProfile': true})
+        setValues({...values, 'redirectToProfile': true})
       }
     })
   }
-  handleChange = name => event => {
+  const handleChange = name => event => {
     const value = name === 'photo'
       ? event.target.files[0]
       : event.target.value
-    this.userData.set(name, value)
-    this.setState({ [name]: value })
+    //userData.set(name, value)
+    setValues({...values, [name]: value })
   }
-  render() {
-    const {classes} = this.props
-    const photoUrl = this.state.id
-                 ? `/api/users/photo/${this.state.id}?${new Date().getTime()}`
+    const photoUrl = values.id
+                 ? `/api/users/photo/${values.id}?${new Date().getTime()}`
                  : '/api/users/defaultphoto'
-    if (this.state.redirectToProfile) {
-      return (<Redirect to={'/user/' + this.state.id}/>)
+    if (values.redirectToProfile) {
+      return (<Redirect to={'/user/' + values.id}/>)
     }
     return (
       <Card className={classes.card}>
@@ -119,43 +122,36 @@ class EditProfile extends Component {
             Edit Profile
           </Typography>
           <Avatar src={photoUrl} className={classes.bigAvatar}/><br/>
-          <input accept="image/*" onChange={this.handleChange('photo')} className={classes.input} id="icon-button-file" type="file" />
+          <input accept="image/*" onChange={handleChange('photo')} className={classes.input} id="icon-button-file" type="file" />
           <label htmlFor="icon-button-file">
-            <Button variant="raised" color="default" component="span">
+            <Button variant="contained" color="default" component="span">
               Upload
               <FileUpload/>
             </Button>
-          </label> <span className={classes.filename}>{this.state.photo ? this.state.photo.name : ''}</span><br/>
-          <TextField id="name" label="Name" className={classes.textField} value={this.state.name} onChange={this.handleChange('name')} margin="normal"/><br/>
+          </label> <span className={classes.filename}>{values.photo ? values.photo.name : ''}</span><br/>
+          <TextField id="name" label="Name" className={classes.textField} value={values.name} onChange={handleChange('name')} margin="normal"/><br/>
           <TextField
             id="multiline-flexible"
             label="About"
             multiline
             rows="2"
-            value={this.state.about}
-            onChange={this.handleChange('about')}
+            value={values.about}
+            onChange={handleChange('about')}
             className={classes.textField}
             margin="normal"
           /><br/>
-          <TextField id="email" type="email" label="Email" className={classes.textField} value={this.state.email} onChange={this.handleChange('email')} margin="normal"/><br/>
-          <TextField id="password" type="password" label="Password" className={classes.textField} value={this.state.password} onChange={this.handleChange('password')} margin="normal"/>
+          <TextField id="email" type="email" label="Email" className={classes.textField} value={values.email} onChange={handleChange('email')} margin="normal"/><br/>
+          <TextField id="password" type="password" label="Password" className={classes.textField} value={values.password} onChange={handleChange('password')} margin="normal"/>
           <br/> {
-            this.state.error && (<Typography component="p" color="error">
+            values.error && (<Typography component="p" color="error">
               <Icon color="error" className={classes.error}>error</Icon>
-              {this.state.error}
+              {values.error}
             </Typography>)
           }
         </CardContent>
         <CardActions>
-          <Button color="primary" variant="raised" onClick={this.clickSubmit} className={classes.submit}>Submit</Button>
+          <Button color="primary" variant="contained" onClick={clickSubmit} className={classes.submit}>Submit</Button>
         </CardActions>
       </Card>
     )
-  }
 }
-
-EditProfile.propTypes = {
-  classes: PropTypes.object.isRequired
-}
-
-export default withStyles(styles)(EditProfile)

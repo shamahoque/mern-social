@@ -1,16 +1,15 @@
-import React, {Component} from 'react'
+import React from 'react'
+import {makeStyles} from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
-import {withStyles} from 'material-ui/styles'
-import List, {ListItem, ListItemAvatar, ListItemIcon, ListItemSecondaryAction, ListItemText} from 'material-ui/List'
-import Avatar from 'material-ui/Avatar'
-import Button from 'material-ui/Button'
-import Typography from 'material-ui/Typography'
+import Avatar from '@material-ui/core/Avatar'
+import Typography from '@material-ui/core/Typography'
 import {Link} from 'react-router-dom'
-import GridList, { GridListTile } from 'material-ui/GridList'
+import GridList from '@material-ui/core/GridList'
+import GridListTile from '@material-ui/core/GridListTile'
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
-    paddingTop: theme.spacing.unit*2,
+    paddingTop: theme.spacing(2),
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
@@ -30,13 +29,12 @@ const styles = theme => ({
     textAlign: 'center',
     marginTop: 10
   }
-})
-class FollowGrid extends Component {
-  render() {
-    const {classes} = this.props
+}))
+export default function FollowGrid (props) {
+  const classes = useStyles()
     return (<div className={classes.root}>
       <GridList cellHeight={160} className={classes.gridList} cols={4}>
-        {this.props.people.map((person, i) => {
+        {props.people.map((person, i) => {
            return  <GridListTile style={{'height':120}} key={i}>
               <Link to={"/user/" + person._id}>
                 <Avatar src={'/api/users/photo/'+person._id} className={classes.bigAvatar}/>
@@ -46,12 +44,9 @@ class FollowGrid extends Component {
         })}
       </GridList>
     </div>)
-  }
 }
 
 FollowGrid.propTypes = {
-  classes: PropTypes.object.isRequired,
   people: PropTypes.array.isRequired
 }
 
-export default withStyles(styles)(FollowGrid)

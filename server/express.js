@@ -14,12 +14,10 @@ import postRoutes from './routes/post.routes'
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 import MainRouter from './../client/MainRouter'
-import StaticRouter from 'react-router-dom/StaticRouter'
+import { StaticRouter } from 'react-router-dom'
 
-import { SheetsRegistry } from 'react-jss/lib/jss'
-import JssProvider from 'react-jss/lib/JssProvider'
-import { MuiThemeProvider, createMuiTheme, createGenerateClassName } from 'material-ui/styles'
-import {teal, orange} from 'material-ui/colors'
+import { ServerStyleSheets, ThemeProvider } from '@material-ui/styles'
+import theme from './../client/theme'
 //end
 
 //comment out before building for production
@@ -49,41 +47,22 @@ app.use('/', authRoutes)
 app.use('/', postRoutes)
 
 app.get('*', (req, res) => {
-   const sheetsRegistry = new SheetsRegistry()
-   const theme = createMuiTheme({
-     palette: {
-       primary: {
-       light: '#52c7b8',
-       main: '#009688',
-       dark: '#00675b',
-       contrastText: '#fff',
-     },
-     secondary: {
-       light: '#ffd95b',
-       main: '#ffa726',
-       dark: '#c77800',
-       contrastText: '#000',
-     },
-       openTitle: teal['700'],
-       protectedTitle: orange['700'],
-       type: 'light'
-     }
-   })
-   const generateClassName = createGenerateClassName()
-   const context = {}
-   const markup = ReactDOMServer.renderToString(
-      <StaticRouter location={req.url} context={context}>
-         <JssProvider registry={sheetsRegistry} generateClassName={generateClassName}>
-            <MuiThemeProvider theme={theme} sheetsManager={new Map()}>
-              <MainRouter/>
-            </MuiThemeProvider>
-         </JssProvider>
-      </StaticRouter>
-     )
+  const sheets = new ServerStyleSheets()
+
+  const context = {}
+  const markup = ReactDOMServer.renderToString(
+      sheets.collect(
+        <StaticRouter location={req.url} context={context}>
+          <ThemeProvider theme={theme}>
+            <MainRouter />
+          </ThemeProvider>
+        </StaticRouter>
+      )
+    )
     if (context.url) {
       return res.redirect(303, context.url)
     }
-    const css = sheetsRegistry.toString()
+    const css = sheets.toString()
     res.status(200).send(Template({
       markup: markup,
       css: css
@@ -94,6 +73,9 @@ app.get('*', (req, res) => {
 app.use((err, req, res, next) => {
   if (err.name === 'UnauthorizedError') {
     res.status(401).json({"error" : err.name + ": " + err.message})
+  }else if (err) {
+    res.status(400).json({"error" : err.name + ": " + err.message})
+    console.log(err)
   }
 })
 

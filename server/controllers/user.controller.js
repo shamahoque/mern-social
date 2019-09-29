@@ -5,34 +5,39 @@ import formidable from 'formidable'
 import fs from 'fs'
 import profileImage from './../../client/assets/images/profile-pic.png'
 
-const create = (req, res, next) => {
+const create = async (req, res) => {
   const user = new User(req.body)
-  user.save((err, result) => {
-    if (err) {
-      return res.status(400).json({
-        error: errorHandler.getErrorMessage(err)
-      })
-    }
-    res.status(200).json({
+  try {
+    await user.save()
+    return res.status(200).json({
       message: "Successfully signed up!"
     })
-  })
+  } catch (err) {
+    return res.status(400).json({
+      error: errorHandler.getErrorMessage(err)
+    })
+  }
 }
 
 /**
  * Load user and append to req.
  */
-const userByID = (req, res, next, id) => {
-  User.findById(id)
-    .populate('following', '_id name')
+const userByID = async (req, res, next, id) => {
+  try {
+    let user = await User.findById(id).populate('following', '_id name')
     .populate('followers', '_id name')
-    .exec((err, user) => {
-    if (err || !user) return res.status('400').json({
-      error: "User not found"
-    })
+    .exec()
+    if (!user)
+      return res.status('400').json({
+        error: "User not found"
+      })
     req.profile = user
     next()
-  })
+  } catch (err) {
+    return res.status('400').json({
+      error: "Could not retrieve user"
+    })
+  }
 }
 
 const read = (req, res) => {
@@ -41,18 +46,18 @@ const read = (req, res) => {
   return res.json(req.profile)
 }
 
-const list = (req, res) => {
-  User.find((err, users) => {
-    if (err) {
-      return res.status(400).json({
-        error: errorHandler.getErrorMessage(err)
-      })
-    }
+const list = async (req, res) => {
+  try {
+    let users = await User.find().select('name email updated created')
     res.json(users)
-  }).select('name email updated created')
+  } catch (err) {
+    return res.status(400).json({
+      error: errorHandler.getErrorMessage(err)
+    })
+  }
 }
 
-const update = (req, res, next) => {
+const update = (req, res) => {
   let form = new formidable.IncomingForm()
   form.keepExtensions = true
   form.parse(req, (err, fields, files) => {
@@ -81,18 +86,18 @@ const update = (req, res, next) => {
   })
 }
 
-const remove = (req, res, next) => {
-  let user = req.profile
-  user.remove((err, deletedUser) => {
-    if (err) {
-      return res.status(400).json({
-        error: errorHandler.getErrorMessage(err)
-      })
-    }
+const remove = async (req, res) => {
+  try {
+    let user = req.profile
+    let deletedUser = await user.remove()
     deletedUser.hashed_password = undefined
     deletedUser.salt = undefined
     res.json(deletedUser)
-  })
+  } catch (err) {
+    return res.status(400).json({
+      error: errorHandler.getErrorMessage(err)
+    })
+  }
 }
 
 const photo = (req, res, next) => {
@@ -107,70 +112,70 @@ const defaultPhoto = (req, res) => {
   return res.sendFile(process.cwd()+profileImage)
 }
 
-const addFollowing = (req, res, next) => {
-  User.findByIdAndUpdate(req.body.userId, {$push: {following: req.body.followId}}, (err, result) => {
-    if (err) {
-      return res.status(400).json({
-        error: errorHandler.getErrorMessage(err)
-      })
-    }
+const addFollowing = async (req, res, next) => {
+  try{
+    await User.findByIdAndUpdate(req.body.userId, {$push: {following: req.body.followId}}) 
     next()
-  })
+  }catch(err){
+    return res.status(400).json({
+      error: errorHandler.getErrorMessage(err)
+    })
+  }
 }
 
-const addFollower = (req, res) => {
-  User.findByIdAndUpdate(req.body.followId, {$push: {followers: req.body.userId}}, {new: true})
-  .populate('following', '_id name')
-  .populate('followers', '_id name')
-  .exec((err, result) => {
-    if (err) {
+const addFollower = async (req, res) => {
+  try{
+    let result = await User.findByIdAndUpdate(req.body.followId, {$push: {followers: req.body.userId}}, {new: true})
+                            .populate('following', '_id name')
+                            .populate('followers', '_id name')
+                            .exec()
+      result.hashed_password = undefined
+      result.salt = undefined
+      res.json(result)
+    }catch(err) {
       return res.status(400).json({
         error: errorHandler.getErrorMessage(err)
       })
-    }
+    }  
+}
+
+const removeFollowing = async (req, res, next) => {
+  try{
+    await User.findByIdAndUpdate(req.body.userId, {$pull: {following: req.body.unfollowId}}) 
+    next()
+  }catch(err) {
+    return res.status(400).json({
+      error: errorHandler.getErrorMessage(err)
+    })
+  }
+}
+const removeFollower = async (req, res) => {
+  try{
+    let result = await User.findByIdAndUpdate(req.body.unfollowId, {$pull: {followers: req.body.userId}}, {new: true})
+                            .populate('following', '_id name')
+                            .populate('followers', '_id name')
+                            .exec() 
     result.hashed_password = undefined
     result.salt = undefined
     res.json(result)
-  })
-}
-
-const removeFollowing = (req, res, next) => {
-  User.findByIdAndUpdate(req.body.userId, {$pull: {following: req.body.unfollowId}}, (err, result) => {
-    if (err) {
+  }catch(err){
       return res.status(400).json({
         error: errorHandler.getErrorMessage(err)
       })
-    }
-    next()
-  })
-}
-const removeFollower = (req, res) => {
-  User.findByIdAndUpdate(req.body.unfollowId, {$pull: {followers: req.body.userId}}, {new: true})
-  .populate('following', '_id name')
-  .populate('followers', '_id name')
-  .exec((err, result) => {
-    if (err) {
-      return res.status(400).json({
-        error: errorHandler.getErrorMessage(err)
-      })
-    }
-    result.hashed_password = undefined
-    result.salt = undefined
-    res.json(result)
-  })
+  }
 }
 
-const findPeople = (req, res) => {
+const findPeople = async (req, res) => {
   let following = req.profile.following
   following.push(req.profile._id)
-  User.find({ _id: { $nin : following } }, (err, users) => {
-    if (err) {
-      return res.status(400).json({
-        error: errorHandler.getErrorMessage(err)
-      })
-    }
+  try {
+    let users = await User.find({ _id: { $nin : following } }).select('name')
     res.json(users)
-  }).select('name')
+  }catch(err){
+    return res.status(400).json({
+      error: errorHandler.getErrorMessage(err)
+    })
+  }
 }
 
 export default {

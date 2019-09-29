@@ -3,12 +3,13 @@ import jwt from 'jsonwebtoken'
 import expressJwt from 'express-jwt'
 import config from './../../config/config'
 
-const signin = (req, res) => {
-  User.findOne({
-    "email": req.body.email
-  }, (err, user) => {
+const signin = async (req, res) => {
+  try {
+    let user = User.findOne({
+      "email": req.body.email
+    })
 
-    if (err || !user)
+    if (!user)
       return res.status('401').json({
         error: "User not found"
       })
@@ -31,8 +32,13 @@ const signin = (req, res) => {
       token,
       user: {_id: user._id, name: user.name, email: user.email}
     })
+  } catch (err) {
 
-  })
+    return res.status('401').json({
+      error: "Could not sign in"
+    })
+
+  }
 }
 
 const signout = (req, res) => {

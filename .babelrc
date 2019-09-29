@@ -1,10 +1,15 @@
 {
-    "presets": [
-      "env",
-      "stage-2",
-      "react"
+  "presets": [
+    ["@babel/preset-env",
+      {
+        "targets": {
+          "node": "current"
+        }
+      }
     ],
-    "plugins": [
-      "react-hot-loader/babel"
-    ]
+    "@babel/preset-react"
+  ],
+  "plugins": [
+    "react-hot-loader/babel"
+  ]
 }
