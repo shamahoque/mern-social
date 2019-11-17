@@ -7,7 +7,7 @@ import fs from 'fs'
 const create = (req, res, next) => {
   let form = new formidable.IncomingForm()
   form.keepExtensions = true
-  form.parse(req, (err, fields, files) => {
+  form.parse(req, async (err, fields, files) => {
     console.log(err)
     if (err) {
       return res.status(400).json({
@@ -20,14 +20,14 @@ const create = (req, res, next) => {
       post.photo.data = fs.readFileSync(files.photo.path)
       post.photo.contentType = files.photo.type
     }
-    post.save((err, result) => {
-      if (err) {
-        return res.status(400).json({
-          error: errorHandler.getErrorMessage(err)
-        })
-      }
+    try {
+      let result = await post.save()
       res.json(result)
-    })
+    }catch (err){
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err)
+      })
+    }
   })
 }
 

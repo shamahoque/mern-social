@@ -15,7 +15,7 @@ const auth = {
       sessionStorage.setItem('jwt', JSON.stringify(jwt))
     cb()
   },
-  signout(cb) {
+  clearJWT(cb) {
     if (typeof window !== "undefined")
       sessionStorage.removeItem('jwt')
     cb()

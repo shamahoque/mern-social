@@ -73,7 +73,7 @@ export default function Signup (){
     return (<div>
       <Card className={classes.card}>
         <CardContent>
-          <Typography type="headline" component="h2" className={classes.title}>
+          <Typography variant="h6" className={classes.title}>
             Sign Up
           </Typography>
           <TextField id="name" label="Name" className={classes.textField} value={values.name} onChange={handleChange('name')} margin="normal"/><br/>

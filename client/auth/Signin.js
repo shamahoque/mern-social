@@ -80,7 +80,7 @@ export default function Signin(props) {
   return (
       <Card className={classes.card}>
         <CardContent>
-          <Typography variant="h5" className={classes.title}>
+          <Typography variant="h6" className={classes.title}>
             Sign In
           </Typography>
           <TextField id="email" type="email" label="Email" className={classes.textField} value={values.email} onChange={handleChange('email')} margin="normal"/><br/>

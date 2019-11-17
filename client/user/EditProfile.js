@@ -85,11 +85,11 @@ export default function EditProfile({ match }) {
   
   const clickSubmit = () => {
     let userData = new FormData()
-    userData.append('name', values.name || undefined)
-    userData.append('email', values.email || undefined)
-    userData.append('passoword', values.passoword || undefined)
-    userData.append('about', values.about || undefined)
-    userData.append('photo', values.photo || undefined)
+    values.name && userData.append('name', values.name)
+    values.email && userData.append('email', values.email)
+    values.passoword && userData.append('passoword', values.passoword)
+    values.about && userData.append('about', values.about)
+    values.photo && userData.append('photo', values.photo)
     update({
       userId: match.params.userId
     }, {
@@ -118,7 +118,7 @@ export default function EditProfile({ match }) {
     return (
       <Card className={classes.card}>
         <CardContent>
-          <Typography type="headline" component="h2" className={classes.title}>
+          <Typography variant="h6" className={classes.title}>
             Edit Profile
           </Typography>
           <Avatar src={photoUrl} className={classes.bigAvatar}/><br/>

@@ -52,7 +52,6 @@ export default function Newsfeed () {
   const addPost = (post) => {
     const updatedPosts = [...posts]
     updatedPosts.unshift(post)
-    console.log(updatedPosts)
     setPosts(updatedPosts)
   }
   const removePost = (post) => {
