@@ -7,8 +7,8 @@ A simple social media application with users, posts, likes and comments - develo
 ### [Live Demo](http://social.mernbook.com/ "MERN Social")
 
 #### What you need to run this code
-1. Node (12.10.0)
-2. NPM (6.10.3)
+1. Node (13.12.0)
+2. NPM (6.14.4)
 3. MongoDB (4.2.0)
 
 ####  How to run this code
