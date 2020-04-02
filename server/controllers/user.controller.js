@@ -1,5 +1,5 @@
 import User from '../models/user.model'
-import _ from 'lodash'
+import extend from 'lodash/extend'
 import errorHandler from './../helpers/dbErrorHandler'
 import formidable from 'formidable'
 import fs from 'fs'
@@ -67,7 +67,7 @@ const update = (req, res) => {
       })
     }
     let user = req.profile
-    user = _.extend(user, fields)
+    user = extend(user, fields)
     user.updated = Date.now()
     if(files.photo){
       user.photo.data = fs.readFileSync(files.photo.path)
