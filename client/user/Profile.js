@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export default function Profile({ match }) {
-  const classes = useStyles();
+  const classes = useStyles()
   const [values, setValues] = useState({
     user: {following:[], followers:[]},
     redirectToSignin: false,

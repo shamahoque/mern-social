@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export default function Users() { 
-  const classes = useStyles();
+  const classes = useStyles()
   const [users, setUsers] = useState([])
 
   useEffect(() => {
