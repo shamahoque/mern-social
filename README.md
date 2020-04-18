@@ -21,21 +21,34 @@ A simple social media application with users, posts, likes and comments - develo
 ---- 
 ### More applications built using this stack
 
-* [MERN Skeleton](https://github.com/shamahoque/mern-skeleton)
-* [MERN Marketplace](https://github.com/shamahoque/mern-marketplace)
-* [MERN Mediastream](https://github.com/shamahoque/mern-mediastream)
-* [MERN VR Game](https://github.com/shamahoque/mern-vrgame)
+* [MERN Skeleton](https://github.com/shamahoque/mern-social/tree/second-edition)
+* [MERN Classroom](https://github.com/shamahoque/mern-classroom)
+* [MERN Marketplace](https://github.com/shamahoque/mern-marketplace/tree/second-edition)
+* [MERN Expense Tracker](https://github.com/shamahoque/mern-expense-tracker)
+* [MERN Mediastream](https://github.com/shamahoque/mern-mediastream/tree/second-edition)
+* [MERN VR Game](https://github.com/shamahoque/mern-vrgame/tree/second-edition)
 ----
 ## Get the book
-#### [Full-Stack React Projects](https://www.packtpub.com/web-development/full-stack-react-projects)
-*Unleash the power of MERN stack by building diverse web applications using React, Node.js, Express, and MongoDB*
+#### [Full-Stack React Projects - Second Edition](https://www.packtpub.com/web-development/full-stack-react-projects-second-edition)
+*Build real-world modern web apps with the MERN stack from scratch*
 
-<a href="https://www.packtpub.com/web-development/full-stack-react-projects"><img src="https://s3.amazonaws.com/mernbook/git+/B09550_MockupSmall.png" align="center" width="400" alt="Full-Stack React Projects"></a>
+<a href="https://www.packtpub.com/web-development/full-stack-react-projects-second-edition"><img src="https://mernbook.s3.amazonaws.com/git+/Book_2ndEd.jpg" align="center" width="400" alt="Full-Stack React Projects"></a>
 
-The benefits of using a full JavaScript stack for web development are undeniable, especially when robust and widely adopted technologies such as React, Node, and Express and are available. Combining the power of React with industry-tested, server-side technologies, such as Node, Express, and MongoDB, creates a diverse array of possibilities when developing real-world web applications.
+React combined with industry-tested, server-side technologies, such as Node, Express, and MongoDB, enables you to develop and deploy robust real-world full-stack web apps. This updated second edition focuses on the latest versions and conventions of the technologies in this stack, along with their new features such as Hooks in React and async/await in JavaScript. The book also explores advanced topics such as implementing real-time bidding, a web-based classroom app, and data visualization in an expense tracking app.
 
-This book guides you through preparing the development environment for MERN stack-based web development, to creating a basic skeleton application and extending it to build four different web applications. These applications include a social media, an online marketplace, a media streaming, and a web-based game application with virtual reality features.
+Full-Stack React Projects will take you through the process of preparing the development environment for MERN stack-based web development, creating a basic skeleton app, and extending it to build six different web apps. You'll build apps for social media, classrooms, media streaming, online marketplaces with real-time bidding, and web-based games with virtual reality features. Throughout the book, you'll learn how MERN stack web development works, extend its capabilities for complex features, and gain actionable insights into creating MERN-based apps, along with exploring industry best practices to meet the ever-increasing demands of the real world.
 
-While learning to set up the stack and developing a diverse range of applications with this book, you will grasp the inner workings of the MERN stack, extend its capabilities for complex features, and gain actionable knowledge of how to prepare MERN-based applications to meet the growing demands of real-world web applications.
+Things you'll learn in this book:
+
+- Extend a MERN-based application to build a variety of applications
+- Add real-time communication capabilities with Socket.IO
+- Implement data visualization features for React applications using Victory
+- Develop media streaming applications using MongoDB GridFS
+- Improve SEO for your MERN apps by implementing server-side rendering with data
+- Implement user authentication and authorization using JSON web tokens
+- Set up and use React 360 to develop user interfaces with VR capabilities
+- Make your MERN stack applications reliable and scalable with industry best practices
+
+If you feel this book is for you, get your [copy](https://www.amazon.com/dp/1839215410) today!
 
 ---
