@@ -31,7 +31,7 @@ A simple social media application with users, posts, likes and comments - develo
 ----
 ## Get the book
 #### [Full-Stack React Projects - Second Edition](https://www.packtpub.com/web-development/full-stack-react-projects-second-edition)
-*Build real-world modern web apps with the MERN stack from scratch*
+*Learn MERN stack development by building modern web apps using MongoDB, Express, React, and Node.js*
 
 <a href="https://www.packtpub.com/web-development/full-stack-react-projects-second-edition"><img src="https://mernbook.s3.amazonaws.com/git+/Book_2ndEd.jpg" align="center" width="400" alt="Full-Stack React Projects"></a>
 
