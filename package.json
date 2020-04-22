@@ -50,7 +50,7 @@
     "formidable": "1.2.1",
     "helmet": "3.12.0",
     "jsonwebtoken": "8.2.1",
-    "lodash": "4.17.10",
+    "lodash": "4.17.13",
     "material-ui": "1.0.0-beta.43",
     "material-ui-icons": "1.0.0-beta.36",
     "mongoose": "5.0.16",
