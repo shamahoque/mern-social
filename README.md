@@ -1,4 +1,5 @@
-# MERN Social
+# MERN Social 2.0
+- *Looking for the first edition code? [Check here](https://github.com/shamahoque/mern-social/tree/master)*
 
 A simple social media application with users, posts, likes and comments - developed using React, Node, Express and MongoDB. 
 
