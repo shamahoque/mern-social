@@ -141,7 +141,7 @@ export default function Post (props){
               </IconButton> <span>{values.comments.length}</span>
         </CardActions>
         <Divider/>
-        <Comments postId={props.post._id} comments={values.comments} updateComments={updateComments}/>
+        {/* <Comments postId={props.post._id} comments={values.comments} updateComments={updateComments}/> */}
       </Card>
     )
   
