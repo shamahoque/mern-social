@@ -51,7 +51,7 @@
     "express-jwt": "5.3.1",
     "formidable": "1.2.2",
     "helmet": "3.22.0",
-    "jsonwebtoken": "8.5.1",
+    "jsonwebtoken": "9.0.0",
     "lodash": "4.17.15",
     "mongoose": "5.9.7",
     "react": "16.13.1",
